@@ -1,8 +1,8 @@
-#define LED75 A8 //supposant que la rouge soit A11, sinon inverse (pas encore branché)
-#define LED50 A9
-#define LED25 A10
-#define LED0 A11
-#define CREF A5 //Pin théorique, à mettre en place ou vérifier
+#define LED75 A9
+#define LED50 A10
+#define LED25 A11
+#define LED0 A12
+#define CREF A7 
 float CurrentSensor; // Valeur de 0 à 1024 sortie capteur courant
 float VoltCS; // Valeur tension capteur
 float AmpCS; // intensité
@@ -23,6 +23,26 @@ const int phase2 = 11;
 int angle=0;                    // Angle de départ de la tête du robot
 unsigned long temp_millis = millis();
 
+void Debug(){
+  Serial.print("Temps : ");
+  Serial.print(TotTime/1000);
+  Serial.println(" Secondes");
+  Serial.print("Tension batterie : ");
+  Serial.print(VBAT);
+  Serial.println(" Volts"); 
+  Serial.print("Courant : ");
+  Serial.print(AmpCS);
+  Serial.println(" Ampères");
+  Serial.print("Tension capteur : ");
+  Serial.print(VoltCS);
+  Serial.println(" Volts"); 
+  Serial.print("Valeur AnalogPin : ");
+  Serial.println(CurrentSensor);
+  Serial.print("Capacité consomée: ");
+  Serial.print(UsedCapacity);
+  Serial.println(" Coulombs");
+  delay(2000);
+}
 
 void AllumLED(float CAPA){
   if (CAPA<CapaRANGE*0.25){
