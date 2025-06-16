@@ -17,6 +17,13 @@ float CapaMIN=CapaMAX*0.25;
 float CapaRANGE=CapaMAX-CapaMIN;
 float BatPerc=100;
 
+
+const int phase1 = 10;          // Déclaration des broches 
+const int phase2 = 11;
+int angle=0;                    // Angle de départ de la tête du robot
+unsigned long temp_millis = millis();
+
+
 void AllumLED(float CAPA){
   if (CAPA<CapaRANGE*0.25){
     digitalWrite(LED75,HIGH);
@@ -49,8 +56,9 @@ void AllumLED(float CAPA){
 }
 
 void setup() {
-  Serial.begin(9600);
-  pinMode(A1,INPUT);
+  Serial.begin(9600);       //Communication avec l'arduino de contrôle
+
+  pinMode(A1,INPUT);        //Setup batterie
   pinMode(A0,INPUT);
   pinMode(LED75,OUTPUT);
   pinMode(LED50,OUTPUT);
@@ -61,6 +69,11 @@ void setup() {
   digitalWrite(LED50,HIGH);
   digitalWrite(LED25,HIGH);
   digitalWrite(LED0,HIGH);
+  
+  pinMode(phase1, OUTPUT);      // Initialiser les broches Pour le Steper
+  pinMode(phase2, OUTPUT);
+  digitalWrite(phase1, LOW);
+  digitalWrite(phase2, LOW);   
 }
 
 void loop() {
@@ -83,7 +96,93 @@ void loop() {
         Serial1.print(BatPerc);
     }
   }
+  
+  switch (Serial.read()){                         //Information envoyée par l'arduino de contrôle
+    case '1':                                 // Tête à 180° 
+      temp_millis = millis();
+      if (angle == 0){                          //Si tête est à 0°
+        if (millis() - temp_millis < 12000) {
+        digitalWrite(phase1, LOW);
+        delay(10);
+        digitalWrite(phase2, LOW);
+        delay(10);
+        digitalWrite(phase1, HIGH);
+        delay(10);
+        digitalWrite(phase2, HIGH);
+        delay(10);
+      }}
+      else if(angle==90){                       //Si tête est à 90°
+        if (millis() - temp_millis < 6000) {
+        digitalWrite(phase1, LOW);
+        delay(10);
+        digitalWrite(phase2, LOW);
+        delay(10);
+        digitalWrite(phase1, HIGH);
+        delay(10);
+        digitalWrite(phase2, HIGH);
+        delay(10);                                                    // NECESSITE DE "BREAK" (ou autre ?) POUR BIEN SORTIR DU IF ?
+      }}
+      angle=180;               //Changement de la valeur de l'angle pour futures rotations
+      break;
 
+    case '3':                                 // Tête à 0°
+      temp_millis = millis();
+      if (angle == 180){                        //Si tête est à 180°
+        if (millis() - temp_millis < 12000){
+        digitalWrite(phase2, LOW);
+        delay(10);
+        digitalWrite(phase1, LOW);
+        delay(10);
+        digitalWrite(phase2, HIGH);
+        delay(10);
+        digitalWrite(phase1, HIGH);
+        delay(10);
+      }}
+      else if(angle==90){                        //Si tête est à 90°
+        if (millis() - temp_millis < 6000){
+        digitalWrite(phase2, LOW);
+        delay(10);
+        digitalWrite(phase1, LOW);
+        delay(10);
+        digitalWrite(phase2, HIGH);
+        delay(10);
+        digitalWrite(phase1, HIGH);
+        delay(10);
+      }}
+      angle=0;                //Changement de la valeur de l'angle pour futures rotations
+      break;
+
+    case '0':                                   // Tête à 90°
+      temp_millis = millis();
+      if (angle == 180){                            //Si tête est à 180°
+        if (millis() - temp_millis < 6000){
+        digitalWrite(phase2, LOW);
+        delay(10);
+        digitalWrite(phase1, LOW);
+        delay(10);
+        digitalWrite(phase2, HIGH);
+        delay(10);
+        digitalWrite(phase1, HIGH);
+        delay(10);
+      }}
+      else if(angle==0){                            //Si tête est à 0°
+        if (millis() - temp_millis < 6000) {
+        digitalWrite(phase1, LOW);
+        delay(10);
+        digitalWrite(phase2, LOW);
+        delay(10);
+        digitalWrite(phase1, HIGH);
+        delay(10);
+        digitalWrite(phase2, HIGH);
+        delay(10);
+      }}
+      angle=90;                //Changement de la valeur de l'angle pour futures rotations
+      break;
+
+  }
+}
+
+/*
   Serial.print("Temps : "); // À enlever sur le programme final d'ici
   Serial.print(TotTime/1000);
   Serial.println(" Secondes");
@@ -102,6 +201,29 @@ void loop() {
   Serial.print(UsedCapacity);
   Serial.println(" Coulombs");
   delay(2000); // à ici
-  
-  
-}
+*/
+
+// DANS L'IMMEDIAT J'AIMERAIS BIEN GARDER CE CODE EN DESSOUS, C'EST LA BASE DE L'ANNEE DERNIERE STP.
+
+/*  if (millis() - temp_millis < 3000) {
+    digitalWrite(phase1, LOW);
+    delay(10);
+    digitalWrite(phase2, LOW);
+    delay(10);
+    digitalWrite(phase1, HIGH);
+    delay(10);
+    digitalWrite(phase2, HIGH);
+    delay(10);
+  } else if (millis() - temp_millis < 6000){
+    digitalWrite(phase2, LOW);
+    delay(10);
+    digitalWrite(phase1, LOW);
+    delay(10);
+    digitalWrite(phase2, HIGH);
+    delay(10);
+    digitalWrite(phase1, HIGH);
+    delay(10);
+  } else {
+    temp_millis = millis();
+  }
+*/
