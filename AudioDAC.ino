@@ -7,7 +7,7 @@ Servo cervi;
 
 void setup(){
   randomSeed(analogRead(A6));
-  Serial.begin(9600);        //Setup la connexion série avec l'arduino de contrôle
+  Serial1.begin(9600);        //Setup la connexion série avec l'arduino de contrôle
   if (!SD.begin()) {
     return;
   }
@@ -77,9 +77,8 @@ void Aider(){
   i=1;
 }
 
-void loop(){
-  char switchcases=Serial.read();  
-  switch(switchcases){
+void loop(){ 
+  switch(Serial1.read()){
     case '1':
       cervi.write(90);
       switch(i){
@@ -113,4 +112,3 @@ void loop(){
       break;
   }
 }
-
