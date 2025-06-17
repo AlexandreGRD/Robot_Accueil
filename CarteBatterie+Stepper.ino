@@ -23,27 +23,6 @@ const int phase2 = 11;
 int angle=0;                    // Angle de départ de la tête du robot
 unsigned long temp_millis = millis();
 
-void Debug(){
-  Serial.print("Temps : ");
-  Serial.print(TotTime/1000);
-  Serial.println(" Secondes");
-  Serial.print("Tension batterie : ");
-  Serial.print(VBAT);
-  Serial.println(" Volts"); 
-  Serial.print("Courant : ");
-  Serial.print(AmpCS);
-  Serial.println(" Ampères");
-  Serial.print("Tension capteur : ");
-  Serial.print(VoltCS);
-  Serial.println(" Volts"); 
-  Serial.print("Valeur AnalogPin : ");
-  Serial.println(CurrentSensor);
-  Serial.print("Capacité consomée: ");
-  Serial.print(UsedCapacity);
-  Serial.println(" Coulombs");
-  delay(2000);
-}
-
 void AllumLED(float CAPA){
   if (CAPA<CapaRANGE*0.25){
     digitalWrite(LED75,HIGH);
@@ -76,8 +55,7 @@ void AllumLED(float CAPA){
 }
 
 void setup() {
-  Serial.begin(9600);       //Communication avec l'arduino de contrôle
-
+  Serial1.begin(9600);       //Communication avec l'arduino de contrôle
   pinMode(A1,INPUT);        //Setup batterie
   pinMode(A0,INPUT);
   pinMode(LED75,OUTPUT);
@@ -114,11 +92,8 @@ void loop() {
     switch(Serial1.read()){
       case 50:
         Serial1.print(BatPerc);
-    }
-  }
-  
-  switch (Serial.read()){                         //Information envoyée par l'arduino de contrôle
-    case '1':                                 // Tête à 180° 
+        break;
+      case '1':                                 // Tête à 180° 
       temp_millis = millis();
       if (angle == 0){                          //Si tête est à 0°
         if (millis() - temp_millis < 12000) {
@@ -144,7 +119,6 @@ void loop() {
       }}
       angle=180;               //Changement de la valeur de l'angle pour futures rotations
       break;
-
     case '3':                                 // Tête à 0°
       temp_millis = millis();
       if (angle == 180){                        //Si tête est à 180°
@@ -198,7 +172,7 @@ void loop() {
       }}
       angle=90;                //Changement de la valeur de l'angle pour futures rotations
       break;
-
+    }
   }
 }
 
