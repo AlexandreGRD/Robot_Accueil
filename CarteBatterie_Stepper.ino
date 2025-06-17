@@ -85,7 +85,7 @@ void loop() {
   VBAT=ReadBat/1023.0*15.0;
   CurrentSensor=analogRead(CMOT);
   VoltCS=5*(CurrentSensor/1023);
-  AmpCS=(2.495-VoltCS)*10; //À 0A : 2.495V
+  AmpCS=(2.559-VoltCS)*10; //À 0A : 2.495V
   TotTime=millis();
   UsedCapacity=UsedCapacity+(AmpCS*(TotTime-CompTime)/1000); 
   CompTime=TotTime;
