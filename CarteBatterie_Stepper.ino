@@ -49,9 +49,9 @@ void AllumLED(float CAPA){
     digitalWrite(LED50,LOW);
     digitalWrite(LED25,LOW);
     digitalWrite(LED0,HIGH);
+    Serial.print("25p");
     if (BatWarn){
       Serial1.print(1);
-      BatWarn=0;
     }
   }
   else if (CAPA>CapaRANGE){
@@ -87,7 +87,7 @@ void loop() {
   VoltCS=5*(CurrentSensor/1023);
   AmpCS=(2.546-VoltCS)*10; //Tention capteur moteurs eteints : 2.546V 
   TotTime=millis();
-  UsedCapacity=UsedCapacity+((AmpCS+0.6)*(TotTime-CompTime)/1000); //0.6A, consommation robot moteurs eteints
+  UsedCapacity=UsedCapacity+((AmpCS+0.6)*(TotTime-CompTime)/3600000); //0.6A, consommation robot moteurs eteints
   CompTime=TotTime;
   BatPerc=(CapaRANGE-UsedCapacity)/CapaRANGE*100;
   if (TotTime>=LEDTime){
