@@ -49,7 +49,6 @@ void AllumLED(float CAPA){
     digitalWrite(LED50,LOW);
     digitalWrite(LED25,LOW);
     digitalWrite(LED0,HIGH);
-    Serial.print("25p");
     if (BatWarn){
       Serial1.print(1);
     }
@@ -97,7 +96,7 @@ void loop() {
   if (Serial1.available()>0){
     switch(Serial1.read()){
       case 50:
-        Serial1.print(BatPerc);
+        Serial1.print(BatPerc); //Envoie valeur batterie
         break;
       case '1':                                 // Tête à 180° 
       temp_millis = millis();
