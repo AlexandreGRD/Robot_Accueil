@@ -87,7 +87,7 @@ void loop() {
   VoltCS=5*(CurrentSensor/1023);
   AmpCS=(2.546-VoltCS)*10; //Tention capteur moteurs eteints : 2.546V 
   TotTime=millis();
-  UsedCapacity=UsedCapacity+((AmpCS+1.2)*(TotTime-CompTime)/3600000); //1.2A, consommation robot moteurs eteints
+  UsedCapacity=UsedCapacity+((AmpCS+1.4)*(TotTime-CompTime)/3600000); //1.4A, consommation robot moteurs eteints
   CompTime=TotTime;
   BatPerc=(CapaRANGE-UsedCapacity)/CapaRANGE*100;
   if (TotTime>=LEDTime){
