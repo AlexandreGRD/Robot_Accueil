@@ -6,8 +6,9 @@
 #define Motion 7 //Capteur de mouvement
 #define Obstacle_Trigger1 8 //Capteur d'obstacle gauche trigger
 #define Obstacle_Echo1 9 //Capteur d'obstacle gauche reponse
-#define Obstacle_Trigger2 A0 //Capteur d'obstacle droit trigger
-#define Obstacle_Echo2 A1 //Capteur d'obstacle droit reponse
+#define Obstacle_Trigger2 A0 //Capteur d'obstacle tete trigger
+#define Obstacle_Echo2 A1 //Capteur d'obstacle Tete reponse
+int rotation=60;
 int MesureMaxi=300,MesureMini=3; //limite des capteurs d'obstacle
 float Cm=1.715; //formule distance
 long DureeG,DistanceG,DureeT,DistanceT; //resultat des capteurs d'obsacle
@@ -46,13 +47,13 @@ void loop() {
     switch(Serial.parseInt()){
       case 0:
         PartyMode=0;
-        delay(300);
-        Serial.println(0);
+        /*delay(300);
+        Serial.println(0);*/
         break;
       case 1:
         PartyMode=1;
-        delay(300);
-        Serial.println(1);
+        /*delay(300);
+        Serial.println(1);*/
         break;
       case 2:
         Serial2.print(2);
@@ -142,10 +143,10 @@ void Drive(){
         vitesse(0,180);
         break;
       case 2:
-        vitesse(0,120);
+        vitesse(0,180-rotation);
         break;
       case 4:
-        vitesse(60,180);
+        vitesse(rotation,180);
         break;
     }
   }
@@ -171,10 +172,10 @@ void Backward(){
         vitesse(180,0);
         break;
       case 2:
-        vitesse(180,60);
+        vitesse(180-rotation,0);
         break;
       case 4:
-        vitesse(120,0);
+        vitesse(180,rotation);
         break;
     }
   }
