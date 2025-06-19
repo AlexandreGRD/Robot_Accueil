@@ -8,11 +8,9 @@
 #define Obstacle_Echo1 9 //Capteur d'obstacle gauche reponse
 #define Obstacle_Trigger2 A0 //Capteur d'obstacle droit trigger
 #define Obstacle_Echo2 A1 //Capteur d'obstacle droit reponse
-#define Obstacle_Trigger3 A2 //Capteur d'obstacle tête trigger
-#define Obstacle_Echo3 A3 //Capteur d'obstacle tête reponse
 int MesureMaxi=300,MesureMini=3; //limite des capteurs d'obstacle
 float Cm=1.715; //formule distance
-long DureeG,DistanceG,DureeD,DistanceD,DureeT,DistanceT; //resultat des capteurs d'obsacle
+long DureeG,DistanceG,DureeT,DistanceT; //resultat des capteurs d'obsacle
 volatile int SensCase=0;//To determine wich  case to use
 bool PartyMode=1;
 int Batterie,cd=0;
@@ -34,33 +32,39 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(LineTurnRight),TurnRight,CHANGE); 
   pinMode(Obstacle_Trigger1,OUTPUT);
   pinMode(Obstacle_Trigger2,OUTPUT);
-  pinMode(Obstacle_Trigger3,OUTPUT);
   pinMode(Obstacle_Echo1,INPUT);
   pinMode(Obstacle_Echo2,INPUT);
-  pinMode(Obstacle_Echo3,INPUT); //definition des pins 
-  delay(3000);
+  delay(1000);
   Serial2.println(0);
+  delay(5000);
+  calibrage();
+  delay(2000);
 }
 
 void loop() {
   if(Serial.available()>0){
     switch(Serial.parseInt()){
-      case 48:
+      case 0:
         PartyMode=0;
+        delay(300);
+        Serial.println(0);
         break;
-      case 49:
+      case 1:
         PartyMode=1;
+        delay(300);
+        Serial.println(1);
         break;
-      case 50:
-        Serial2.println(2);
+      case 2:
+        Serial2.print(2);
+        delay(300);
         while(Serial2.available()==0){}
         Serial.println(Serial.parseInt());
         break;
     }
   }
   if(Serial2.available()>0){
-    switch(Serial2.read()){
-      case 49:
+    switch(Serial2.parseInt()){
+      case 1:
         Serial1.print(5);
         break;
     }
@@ -71,7 +75,7 @@ void loop() {
         Detect();
         break;
       case 1:
-        if(cd-millis()<=30000){
+        if(millis()-cd<=90000){
           break;
         }
         else{
@@ -89,86 +93,101 @@ void vitesse(int vitesseG,int vitesseD) {
 void TurnLeft(){
   switch(digitalRead(LineTurnLeft)){
     case 0:
-      SensCase=SensCase+4;
+      SensCase=SensCase-4;
       break;
     case 1:
-      SensCase=SensCase-4;
+      SensCase=SensCase+4;
       break;
   }
 }
 void TurnRight(){
   switch(digitalRead(LineTurnRight)){
     case 0:
-      SensCase=SensCase+2;
+      SensCase=SensCase-2;
       break;
     case 1:
-      SensCase=SensCase-2;
+      SensCase=SensCase+2;
       break;
   }
 }
 void Detect(){
-  Serial2.println(3);
+  Serial2.print(3);
+  delay(300);
   Serial1.println(1);
   delay(6000);
   Drive();
   Serial1.println(3);
+  delay(300);
   Serial2.println(1);
-  delay(12000);
+  delay(6000);
   Backward();
 }
 void Drive(){
   vitesse(0,180);
   delay(500);
-  while(digitalRead(LineTurnRight)==1 && digitalRead(LineTurnLeft)==1 && digitalRead(LineFollow)==0){
+    while((digitalRead(LineTurnRight)==0 || digitalRead(LineTurnLeft)==0)){
     if(digitalRead(Motion)==1){
       vitesse(45,135);
       DureeG = pulseIn(Obstacle_Echo1, HIGH);
       DistanceG=DureeG*Cm;
-      DureeD = pulseIn(Obstacle_Echo2, HIGH);
-      DistanceD=DureeD*Cm;
-      if ((DistanceD<100)||(DistanceG<100)){
+      if ((DistanceG<100)){
         vitesse(90,90);
         Serial1.println(2);
-        delay(3000);
+        delay(8000);
       }
     }
+    Serial.println(SensCase);
     switch(SensCase){
       case 0:
         vitesse(0,180);
         break;
       case 2:
-        vitesse(0,165);
+        vitesse(0,120);
         break;
       case 4:
-        vitesse(15,180);
+        vitesse(60,180);
         break;
     }
   }
+  vitesse(90,90);
 }
 void Backward(){
   vitesse(180,0);
   delay(500);
-  while(digitalRead(LineTurnRight)==1 && digitalRead(LineTurnLeft)==1 && digitalRead(LineFollow)==0){
-    if(digitalRead(Motion)==1){
+  while((digitalRead(LineTurnRight)==0 || digitalRead(LineTurnLeft)==0)){
+    /*if(digitalRead(Motion)==1){
       vitesse(135,45);
-      DureeT = pulseIn(Obstacle_Echo3, HIGH);
+      DureeT = pulseIn(Obstacle_Echo2, HIGH);
       DistanceT=DureeT*Cm;
       if (DistanceT<100){
         vitesse(90,90);
         Serial1.println(2);
-        delay(3000);
+        delay(8000);
       }
-    }
-      switch(SensCase){
+    }*/
+    Serial.println(SensCase);
+    switch(SensCase){
       case 0:
         vitesse(180,0);
         break;
       case 2:
-        vitesse(165,0);
+        vitesse(180,60);
         break;
       case 4:
-        vitesse(0,165);
+        vitesse(120,0);
         break;
     }
   }
+  vitesse(90,90);
+}
+void calibrage(){
+  delay(500);
+  vitesse(90,90);
+  delay(500);
+  vitesse(0,0);
+  delay(500);
+  vitesse(180,180);
+  delay(500);
+  vitesse(90,90);
+  delay(500);
 }
