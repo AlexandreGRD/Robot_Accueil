@@ -15,10 +15,10 @@ unsigned long LEDTime=0; //Comparateur, permet de tester l'état des LEDs une fo
 float VBAT;
 float ReadBat;
 float CapaMAX=5.2;
-float CapaMIN=CapaMAX*0.25;
+float CapaMIN=CapaMAX*0.25; // 0.2C Limite basse à ne pas dépasser
 float CapaRANGE=CapaMAX-CapaMIN;
 float BatPerc=100;
-bool BatWarn=1;
+bool BatWarn=1; //Vérifie si le message d'avertissement batterie faible a déjà été envoyé
 
 const int phase1 = 10;          // Déclaration des broches 
 const int phase2 = 11;
@@ -26,25 +26,25 @@ int angle=0;                    // Angle de départ de la tête du robot
 unsigned long temp_millis = millis();
 
 void AllumLED(float CAPA){
-  if (CAPA<CapaRANGE*0.25){
+  if (CAPA<CapaRANGE*0.25){ //Batterie entre 100% et 76%
     digitalWrite(LED75,HIGH);
     digitalWrite(LED50,HIGH);
     digitalWrite(LED25,HIGH);
     digitalWrite(LED0,HIGH);
 }
-  else if (CAPA<CapaRANGE*0.5){
+  else if (CAPA<CapaRANGE*0.5){ //Batterie entre 75% et 51%
     digitalWrite(LED75,LOW);
     digitalWrite(LED50,HIGH);
     digitalWrite(LED25,HIGH);
     digitalWrite(LED0,HIGH);
   }
-  else if (CAPA<CapaRANGE*0.75){
+  else if (CAPA<CapaRANGE*0.75){ //Batterie entre 50% et 26%
     digitalWrite(LED75,LOW);
     digitalWrite(LED50,LOW);
     digitalWrite(LED25,HIGH);
     digitalWrite(LED0,HIGH);
   }
-  else if (CAPA<CapaRANGE){
+  else if (CAPA<CapaRANGE){ //Batterie entre 25% et 1%
     digitalWrite(LED75,LOW);
     digitalWrite(LED50,LOW);
     digitalWrite(LED25,LOW);
@@ -53,7 +53,7 @@ void AllumLED(float CAPA){
       Serial1.print(1);
     }
   }
-  else if (CAPA>CapaRANGE){
+  else if (CAPA>CapaRANGE){ //Batterie à 0%
     pinMode(CREF,OUTPUT);
     digitalWrite(CREF,HIGH);    
   }
@@ -67,7 +67,7 @@ void setup() {
   pinMode(LED50,OUTPUT);
   pinMode(LED25,OUTPUT);
   pinMode(LED0,OUTPUT);
-  pinMode(CREF,INPUT);
+  pinMode(CREF,INPUT); // Haute impédance
   digitalWrite(LED75,HIGH);
   digitalWrite(LED50,HIGH);
   digitalWrite(LED25,HIGH);
@@ -81,15 +81,15 @@ void setup() {
 
 void loop() {
   ReadBat=analogRead(VMOT);
-  VBAT=ReadBat/1023.0*15.0;
+  VBAT=ReadBat/1023.0*15.0; // Tension batterie
   CurrentSensor=analogRead(CMOT);
-  VoltCS=5*(CurrentSensor/1023);
-  AmpCS=(2.546-VoltCS)*10; //Tention capteur moteurs eteints : 2.546V 
+  VoltCS=5*(CurrentSensor/1023); // Tension de sortie du capteur
+  AmpCS=(2.546-VoltCS)*10; //Courant moteurs ; Tention capteur moteurs eteints : 2.546V 
   TotTime=millis();
-  UsedCapacity=UsedCapacity+((AmpCS+1.4)*(TotTime-CompTime)/3600000); //1.4A, consommation robot moteurs eteints
+  UsedCapacity=UsedCapacity+((AmpCS+1.4)*(TotTime-CompTime)/3600000); //Intégration par parties ; 1.4A, consommation robot moteurs eteints
   CompTime=TotTime;
   BatPerc=(CapaRANGE-UsedCapacity)/CapaRANGE*100;
-  if (TotTime>=LEDTime){
+  if (TotTime>=LEDTime){ // Ajuste l'état des LEDs une fois par minute
     AllumLED(UsedCapacity);
     LEDTime+=60000;
   }
