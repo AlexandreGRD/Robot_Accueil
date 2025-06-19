@@ -55,7 +55,7 @@ void AllumLED(float CAPA){
   }
   else if (CAPA>CapaRANGE){ //Batterie à 0%
     pinMode(CREF,OUTPUT);
-    digitalWrite(CREF,HIGH);    
+    digitalWrite(CREF,HIGH); // Force le relai à s'ouvrir
   }
 }
 
