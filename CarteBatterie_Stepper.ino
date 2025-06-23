@@ -20,8 +20,8 @@ float CapaRANGE=CapaMAX-CapaMIN;
 float BatPerc=100;
 bool BatWarn=1; //Vérifie si le message d'avertissement batterie faible a déjà été envoyé
 
-const int phase1 = 10;          // Déclaration des broches 
-const int phase2 = 11;
+const int phase1 = 32;          // Déclaration des broches 
+const int phase2 = 34;
 int angle=0;                    // Angle de départ de la tête du robot
 unsigned long temp_millis = millis();
 
